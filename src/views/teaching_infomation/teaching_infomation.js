@@ -107,7 +107,9 @@ const Teaching_infomation = () => {
                 tmp[idx]["manage"] = [
                   <>
                     <CButton onClick={() => handelAdd(tmp[idx])} color="info" type="submit">เพิ่มอาจารย์</CButton>
-                    <CButton onClick={() => handelEdit(tmp[idx])} color="warning" type="submit">แก้ไขอาจารย์</CButton>
+                    <CButton onClick={() => handelDate(tmp[idx])} color="warning" type="submit">แก้ไขวันที่</CButton>
+
+                    {/* <CButton onClick={() => handelEdit(tmp[idx])} color="warning" type="submit">แก้ไขอาจารย์</CButton> */}
                     <CButton onClick={() => handelDel(tmp[idx])} color="danger" type="submit">ลบอาจารย์</CButton>
                   </>
                 ]
@@ -159,7 +161,9 @@ const Teaching_infomation = () => {
                 tmp[idx]["manage"] = [
                   <>
                     <CButton onClick={() => handelAdd(tmp[idx])} color="info" type="submit">เพิ่มอาจารย์</CButton>
-                    <CButton onClick={() => handelEdit(tmp[idx])} color="warning" type="submit">แก้ไขอาจารย์</CButton>
+                    <CButton onClick={() => handelDate(tmp[idx])} color="warning" type="submit">แก้ไขวันที่</CButton>
+
+                    {/* <CButton onClick={() => handelEdit(tmp[idx])} color="warning" type="submit">แก้ไขอาจารย์</CButton> */}
                     <CButton onClick={() => handelDel(tmp[idx])} color="danger" type="submit">ลบอาจารย์</CButton>
                   </>
                 ]
@@ -215,6 +219,11 @@ const Teaching_infomation = () => {
     console.log("edit",value)
     setSelectData(value)
   }
+  function updateTime(event){
+    console.log("check",event.target.inputState)
+
+  }
+
 
   useEffect(() =>{
     getAllInfomation("").then(function(result) {
@@ -225,7 +234,7 @@ const Teaching_infomation = () => {
           tmp[idx]["manage"] = [
             <>
               <CButton onClick={() => handelAdd(tmp[idx])} color="info" type="submit">เพิ่มอาจารย์</CButton>
-              <CButton onClick={() => handelDate(tmp[idx])} color="warning" type="submit">แก้ไขวันที</CButton>
+              <CButton onClick={() => handelDate(tmp[idx])} color="warning" type="submit">แก้ไขวันที่</CButton>
               {/* <CButton onClick={() => handelEdit(tmp[idx])} color="warning" type="submit">แก้ไขอาจารย์</CButton> */}
               <CButton onClick={() => handelDel(tmp[idx])} color="danger" type="submit">ลบอาจารย์</CButton>
             </>
@@ -401,12 +410,28 @@ const Teaching_infomation = () => {
         <CModalBody>
           <form  className="row align-items-center" onSubmit={submit} >
             <CRow>
-                วันที่ทำการสอน
               <CCol >
-                <CFormSelect id="inputState">
+                วันที่ทำการสอน
+              </CCol >
+              <CCol >
+                <CFormSelect id="inputState" onChange={(e)=>updateTime(e)}>
                     <option>{"(Mon - Thu)"}</option>
                     <option>{"(Tue-Fri))"}</option>
                     <option>{"(Wed)"}</option>
+                </CFormSelect>
+              </CCol>
+              <CCol >
+                เวลาที่ทำการสอน
+              </CCol >
+              <CCol >
+                <CFormSelect id="inputState2">
+                    <option>{"08.00 – 09.30 น."}</option>
+                    <option>{"09.30 – 11.00 น."}</option>
+                    <option>{"11.00 – 12.30 น."}</option>
+                    <option>{"13.00 – 14.30 น."}</option>
+                    <option>{"14.30 – 16.00 น."}</option>
+                    <option>{"16.00 – 17.30 น."}</option>
+                    <option>{"17.30 – 19.00 น."}</option>
                 </CFormSelect>
               </CCol>
             </CRow>
