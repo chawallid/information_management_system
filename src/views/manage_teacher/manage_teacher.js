@@ -9,8 +9,20 @@ import {
   CCardFooter,
   CCardHeader,
   CCol,
+  CForm,
   CProgress,
   CRow,
+  CFormLabel,
+  CModal,
+  CFormInput,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
+  CInputGroup,
+  CInputGroupText,
+  CFormSelect,
+  CFormCheck,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -44,23 +56,20 @@ import {
   cilUserFemale,
 } from '@coreui/icons'
 
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
-
 
 import BootstrapTable from 'react-bootstrap-table-next';
 import { getDataTeacher }  from '../../api/backend_helper'
+import { CreateTeacher }  from '../../api/backend_helper'
+import { DelTeacher }  from '../../api/backend_helper'
 
 
-
-
-
+// CreateTeacher
 
 const Manage_teacher = () => {
+  const [visible, setVisible] = useState(false)
+
+
+
   const [data,setData] = useState([{
       id_teacher:"cmu001",
       designation_name:"นักวิขาการ",
@@ -120,6 +129,72 @@ const Manage_teacher = () => {
     })
   },[])
 
+  function submit(event){
+    event.preventDefault()
+    // console.log("inputState" , event.target)
+    // console.log("lastname" , event.target.lastname.value)
+    let fromdata = {
+      first_name:event.target.firstname.value ,
+      middle_name:event.target.middlename.value ,
+      last_name:event.target.lastname.value,
+      first_name_en:event.target.firstname_en.value,
+      middle_name_en:event.target.middlename_en.value,
+      last_name_en:event.target.lastname_en.value,
+      department_name:event.target.inputState.value,
+      designation_name:event.target.designation_name.value,
+     
+    }
+    CreateTeacher(fromdata).then(function(result){
+      console.log("ggg",result.status)
+      if(result.status){
+        getDataTeacher("").then(function(result) {
+          if(result.status){
+            let tmp = result.data
+            for ( let idx in result.data) {
+              if(tmp[idx].id_teacher < 10){
+                tmp[idx] = {
+                  id_teacher: "cmu00"+tmp[idx].id_teacher,
+                  designation_name: tmp[idx].designation_name,
+                  first_name: tmp[idx].first_name +"("+ tmp[idx].first_name_en+")",
+                  middle_name: tmp[idx].middle_name +"("+ tmp[idx].middle_name_en+")",
+                  last_name: tmp[idx].last_name +"("+ tmp[idx].last_name_en+")",
+                  department_name: tmp[idx].department_name
+                }
+              }else  if(tmp[idx].id_teacher < 100){
+                tmp[idx] = {
+                  id_teacher: "cmu0"+tmp[idx].id_teacher,
+                  designation_name: tmp[idx].designation_name,
+                  first_name: tmp[idx].first_name +"("+ tmp[idx].first_name_en+")",
+                  middle_name: tmp[idx].middle_name +"("+ tmp[idx].middle_name_en+")",
+                  last_name: tmp[idx].last_name +"("+ tmp[idx].last_name_en+")",
+                  department_name: tmp[idx].department_name
+                }
+              }else if(tmp[idx].id_teacher > 100){
+                tmp[idx] = {
+                  id_teacher: "cmu"+tmp[idx].id_teacher,
+                  designation_name: tmp[idx].designation_name,
+                  first_name: tmp[idx].first_name +"("+ tmp[idx].first_name_en+")",
+                  middle_name: tmp[idx].middle_name +"("+ tmp[idx].middle_name_en+")",
+                  last_name: tmp[idx].last_name +"("+ tmp[idx].last_name_en+")",
+                  department_name: tmp[idx].department_name
+                }
+              }
+              
+              console.log(tmp[idx])
+            }        
+            
+            setData(tmp)
+            setVisible(false)
+    
+          }
+        })
+      }
+    })
+
+  }
+
+
+
 
   const columns = [{
     dataField: 'id_teacher',
@@ -156,6 +231,64 @@ const Manage_teacher = () => {
 
   return (
     <>
+      <CModal visible={visible} onClose={() => setVisible(false)}>
+        <CModalHeader onClose={() => setVisible(false)}>
+          <CModalTitle>เพิ่มข้อมูลอาจารย์</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <form  className="row align-items-center" onSubmit={submit} >
+            <CRow>
+              <CCol >
+                  <CFormInput id="firstname" placeholder="ชื่อ"/>
+              </CCol>
+              <CCol >
+                  <CFormInput id="middlename" placeholder="ชื่อกลาง"/>
+              </CCol>
+              <CCol >
+                  <CFormInput id="lastname" placeholder="นามสกุล"/>
+              </CCol>
+            </CRow>
+            <CRow className="mt-2">
+              <CCol >
+                  <CFormInput id="firstname_en" placeholder="firstname"/>
+              </CCol>
+              <CCol >
+                  <CFormInput id="middlename_en" placeholder="middlename"/>
+              </CCol>
+              <CCol >
+                  <CFormInput id="lastname_en" placeholder="lastname"/>
+              </CCol>
+            </CRow>
+            
+            <CRow className="mt-2">
+              <CCol xs="auto">
+                <CFormSelect id="inputState">
+                  <option>ภาควิชาการบัญชี</option>
+                  <option>ภาควิชาการเงิน</option>
+                  <option>ภาควิชาการจัดการและการเป็นผู้ประกอบการ</option>
+                  <option>ภาควิชาการตลาด</option>
+                </CFormSelect>
+              </CCol>
+            </CRow>
+            <CRow className="mt-2">
+              <CCol xs="auto">
+                  <CFormInput id="designation_name" placeholder="ชื่อตำแหน่งวิชาการ"/>
+              </CCol>
+            </CRow>
+            <CRow className={"mt-3"}>
+              <div class="d-flex flex-row-reverse">
+                <CCol xs="auto">
+                  <CButton color="secondary" onClick={() => setVisible(false)}>
+                    ปิด
+                  </CButton>
+                  <CButton type="submit" color="info">ยืนยัน</CButton>
+                </CCol>
+              </div>
+            </CRow>
+          </form>
+        </CModalBody>
+      
+      </CModal>
       <CCard className="mb-4">
         <CCardBody>
           <CRow>
@@ -165,7 +298,7 @@ const Manage_teacher = () => {
             <CCol/>
             <CCol/>
             <CCol>
-              <CButton color="info" type="submit">เพิ่มข้อมูลอาจารย์</CButton>
+              <CButton onClick={() => setVisible(!visible)} color="info" type="submit">เพิ่มข้อมูลอาจารย์</CButton>
             </CCol>
           </CRow>
           <CRow className="mt-2">
