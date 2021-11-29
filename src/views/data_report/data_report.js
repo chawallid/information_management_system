@@ -68,6 +68,12 @@ import { getAllCourseWed }  from '../../api/backend_helper'
 const Data_report = () => {
   const [data,setData] = useState([])
 
+  const [dataMon,setDataMon] = useState([])
+  const [dataTu,setDataTu] = useState([])
+  const [dataWed,setDataWed] = useState([])
+
+  
+
   useEffect(() =>{
     getAllInfomation("").then(function(result) {
       if(result.status){
@@ -90,7 +96,81 @@ const Data_report = () => {
           tmp[idx]["sumload"]  = sum_load
         }
         setData(tmp)
-        console.log("filter", tmp)
+      }
+    })
+    getAllCourseMonThu("").then(function(result){
+      // console.log("result", result)
+
+      if(result.status){
+        let tmp = result.data
+        for ( let idx in result.data) {
+          // setData(result.data)
+          let name_teacher = ""
+          let sum_load = 0
+          for (let idx_name in tmp[idx]["instructor"]){
+            // console.log("ggg",tmp[idx]["instructor"][idx_name]["load"])
+            sum_load = sum_load + parseInt(tmp[idx]["instructor"][idx_name]["load"])
+            if(idx_name < 1){
+              name_teacher = name_teacher + tmp[idx]["instructor"][idx_name]["name"]
+            }else{
+              name_teacher = name_teacher +","+ tmp[idx]["instructor"][idx_name]["name"]
+
+            }
+          }
+          tmp[idx]["instructor"]  =  name_teacher
+          tmp[idx]["sumload"]  = sum_load
+        }
+        setDataMon(tmp)
+      }
+    })
+    getAllCourseTuFri("").then(function(result){
+      if(result.status){
+
+        let tmp = result.data
+        for ( let idx in result.data) {
+          // setData(result.data)
+          let name_teacher = ""
+          let sum_load = 0
+          for (let idx_name in tmp[idx]["instructor"]){
+            // console.log("ggg",tmp[idx]["instructor"][idx_name]["load"])
+            sum_load = sum_load + parseInt(tmp[idx]["instructor"][idx_name]["load"])
+            if(idx_name < 1){
+              name_teacher = name_teacher + tmp[idx]["instructor"][idx_name]["name"]
+            }else{
+              name_teacher = name_teacher +","+ tmp[idx]["instructor"][idx_name]["name"]
+
+            }
+          }
+          tmp[idx]["instructor"]  =  name_teacher
+          tmp[idx]["sumload"]  = sum_load
+        }
+        
+        setDataTu(tmp)
+        
+      }
+    })
+    getAllCourseWed("").then(function(result){
+      if(result.status){
+        let tmp = result.data
+        for ( let idx in result.data) {
+          // setData(result.data)
+          let name_teacher = ""
+          let sum_load = 0
+          for (let idx_name in tmp[idx]["instructor"]){
+            // console.log("ggg",tmp[idx]["instructor"][idx_name]["load"])
+            sum_load = sum_load + parseInt(tmp[idx]["instructor"][idx_name]["load"])
+            if(idx_name < 1){
+              name_teacher = name_teacher + tmp[idx]["instructor"][idx_name]["name"]
+            }else{
+              name_teacher = name_teacher +","+ tmp[idx]["instructor"][idx_name]["name"]
+
+            }
+          }
+          tmp[idx]["instructor"]  =  name_teacher
+          tmp[idx]["sumload"]  = sum_load
+        }
+        setDataWed(tmp)
+        
       }
     })
   },[])
@@ -230,6 +310,60 @@ const Data_report = () => {
     text: 'อาจารย์ผู้สอน'
   }];
 
+  const columns_day = [{
+    dataField: 'id',
+    headerAlign: 'center',
+    align: 'center',
+    text: 'ลำดับ'
+  },{
+  dataField: 'id_course',
+  headerAlign: 'center',
+  align: 'center',
+  text: 'รหัสกระบวนวิชา'
+  },
+  {
+    dataField: 'course_name',
+    headerAlign: 'center',
+    align: 'center',
+    text: 'ชื่อกระบวนวิชา'
+  },
+  {
+    dataField: 'department',
+    headerAlign: 'center',
+    align: 'center',
+    text: 'ภาควิชา'
+  },
+  {
+    dataField: 'credits',
+    headerAlign: 'center',
+    align: 'center',
+    text: 'จำนวนหน่วยกิต'
+  }, {
+    dataField: 'section',
+    headerAlign: 'center',
+    align: 'center',
+    text: 'ตอน (section)'
+  }, {
+    dataField: 'instructor',
+    headerAlign: 'center',
+    align: 'center',
+    text: 'อาจารย์ผู้สอน'
+  }, {
+    dataField: 'date',
+    headerAlign: 'center',
+    align: 'center',
+    text: ' วันที่ทำการสอน'
+  },
+  {
+    dataField: 'time',
+    headerAlign: 'center',
+    align: 'center',
+    text: ' เวลาทำการสอน'
+  }];
+
+
+  
+
 
   
 
@@ -266,6 +400,30 @@ const Data_report = () => {
         <CCardBody>
           <CRow className="mt-2">
             <BootstrapTable keyField='id' data={ data } columns={ columns_department } />
+          </CRow>
+        </CCardBody>
+      </CCard>
+      <CCard className="mb-4">
+        <CCardHeader>รายวัน จันทร์-พฤหัส</CCardHeader>
+        <CCardBody>
+          <CRow className="mt-2">
+            <BootstrapTable keyField='id' data={ dataMon } columns={ columns_day } />
+          </CRow>
+        </CCardBody>
+      </CCard>
+      <CCard className="mb-4">
+        <CCardHeader>รายวัน อังคาร-ศุกร์</CCardHeader>
+        <CCardBody>
+          <CRow className="mt-2">
+            <BootstrapTable keyField='id' data={ dataTu } columns={ columns_day } />
+          </CRow>
+        </CCardBody>
+      </CCard>
+      <CCard className="mb-4">
+        <CCardHeader>รายวัน พุธ</CCardHeader>
+        <CCardBody>
+          <CRow className="mt-2">
+            <BootstrapTable keyField='id' data={ dataWed } columns={ columns_day } />
           </CRow>
         </CCardBody>
       </CCard>
