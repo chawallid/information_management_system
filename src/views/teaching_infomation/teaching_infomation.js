@@ -71,10 +71,17 @@ import { getDataTeacher }  from '../../api/backend_helper'
 import { UpdateInfomation }  from '../../api/backend_helper'
 import { updateInfomationDate }  from '../../api/backend_helper'
 
+import { getAllCourseMonThu }  from '../../api/backend_helper'
+import { getAllCourseTuFri }  from '../../api/backend_helper'
+import { getAllCourseWed }  from '../../api/backend_helper'
 
 
 
 
+
+// export const getAllCourseMonThu = data => get("/AllCourseMonThu", data)
+// export const getAllCourseTuFri = data => get("/AllCourseTuFri", data)
+// export const getAllCourseWed = data => get("/AllCourseWed", data)
 
 
 
@@ -85,6 +92,8 @@ import { updateInfomationDate }  from '../../api/backend_helper'
 
 const Teaching_infomation = () => {
   const [visible, setVisible] = useState(false)
+  const [valueSelect, setValueSelect] = useState("")
+
   const [visibleEdit, setVisibleEdit] = useState(false)
   const [visibleDel, setVisibleDel] = useState(false)
   const [selectData , setSelectData] = useState([])
@@ -97,46 +106,50 @@ const Teaching_infomation = () => {
   function submit(event){
     event.preventDefault()
     if(visible){
-      UpdateInfomation( { load: event.target.workload.value, name: event.target.inputState.value },selectData.id).then(function(result) {
-        if(result.status){
-          getAllInfomation("").then(function(result) {
-            if(result.status){
-              let tmp = result.data
-              for ( let idx in result.data) {
-                console.log(tmp[idx])
-                tmp[idx]["manage"] = [
-                  <>
-                    <CButton onClick={() => handelAdd(tmp[idx])} color="info" type="submit">เพิ่มอาจารย์</CButton>
-                    <CButton onClick={() => handelDate(tmp[idx])} color="warning" type="submit">แก้ไขวันที่</CButton>
-
-                    {/* <CButton onClick={() => handelEdit(tmp[idx])} color="warning" type="submit">แก้ไขอาจารย์</CButton> */}
-                    <CButton onClick={() => handelDel(tmp[idx])} color="danger" type="submit">ลบอาจารย์</CButton>
-                  </>
-                ]
-                let name_teacher = ""
-                let sum_load = 0
-                for (let idx_name in tmp[idx]["instructor"]){
-                  console.log("ggg",tmp[idx]["instructor"][idx_name]["load"])
-                  sum_load = sum_load + parseInt(tmp[idx]["instructor"][idx_name]["load"])
-                  if(idx_name < 1){
-                    name_teacher = name_teacher + tmp[idx]["instructor"][idx_name]["name"]
-                  }else{
-                    name_teacher = name_teacher +","+ tmp[idx]["instructor"][idx_name]["name"]
-      
+      if(event.target.workload.value + selectData.sumload <= 100){
+        UpdateInfomation( { load: event.target.workload.value, name: event.target.inputState.value },selectData.id).then(function(result) {
+          if(result.status){
+            getAllInfomation("").then(function(result) {
+              if(result.status){
+                let tmp = result.data
+                for ( let idx in result.data) {
+                  console.log(tmp[idx])
+                  tmp[idx]["manage"] = [
+                    <>
+                      <CButton onClick={() => handelAdd(tmp[idx])} color="info" type="submit">เพิ่มอาจารย์</CButton>
+                      <CButton onClick={() => handelDate(tmp[idx])} color="warning" type="submit">แก้ไขวันที่</CButton>
+  
+                      {/* <CButton onClick={() => handelEdit(tmp[idx])} color="warning" type="submit">แก้ไขอาจารย์</CButton> */}
+                      <CButton onClick={() => handelDel(tmp[idx])} color="danger" type="submit">ลบอาจารย์</CButton>
+                    </>
+                  ]
+                  let name_teacher = ""
+                  let sum_load = 0
+                  for (let idx_name in tmp[idx]["instructor"]){
+                    console.log("ggg",tmp[idx]["instructor"][idx_name]["load"])
+                    sum_load = sum_load + parseInt(tmp[idx]["instructor"][idx_name]["load"])
+                    if(idx_name < 1){
+                      name_teacher = name_teacher + tmp[idx]["instructor"][idx_name]["name"]
+                    }else{
+                      name_teacher = name_teacher +","+ tmp[idx]["instructor"][idx_name]["name"]
+        
+                    }
                   }
-                }
-                tmp[idx]["instructor"]  =  name_teacher
-                tmp[idx]["sumload"]  = sum_load
-                // console.log(tmp[idx])   
-              }     
-              setData(tmp)
-            }
-          })
-          setVisible(!visible)
-        }
+                  tmp[idx]["instructor"]  =  name_teacher
+                  tmp[idx]["sumload"]  = sum_load
+                  // console.log(tmp[idx])   
+                }     
+                setData(tmp)
+              }
+            })
+            setVisible(!visible)
+          }
+        })
+      }else{
+        console.log("sum load over")
       }
-      )
-      console.log("submit add")
+      
+      // console.log("submit add")
       // console.log("sumload" ,  event.target.workload.value)
       // console.log("lastname" , event.target.lastname.value)
     }else if(visibleEdit){
@@ -147,7 +160,9 @@ const Teaching_infomation = () => {
       console.log("submit del" , selectData)
     }else if(visibleDate){
       let fromdata = {
-        date : event.target.inputState.value
+        date : event.target.inputState.value,
+        time : event.target.inputState2.value,
+        id_course : selectData.id_course
       }
       console.log("submit update" , fromdata)
       updateInfomationDate(fromdata , selectData.id).then(function(result){
@@ -220,7 +235,8 @@ const Teaching_infomation = () => {
     setSelectData(value)
   }
   function updateTime(event){
-    console.log("check",event.target.inputState)
+    setValueSelect(event.target.value)
+    console.log("value" , valueSelect)
 
   }
 
@@ -307,13 +323,26 @@ const Teaching_infomation = () => {
     dataField: 'id',
     headerAlign: 'center',
     align: 'center',
-    text: 'รหัสกระบวนวิชา'
-  }, {
+    text: 'ลำดับ'
+  },{
+  dataField: 'id_course',
+  headerAlign: 'center',
+  align: 'center',
+  text: 'รหัสกระบวนวิชา'
+  },
+  {
     dataField: 'course_name',
     headerAlign: 'center',
     align: 'center',
     text: 'ชื่อกระบวนวิชา'
-  }, {
+  },
+  {
+    dataField: 'department',
+    headerAlign: 'center',
+    align: 'center',
+    text: 'ภาควิชา'
+  },
+  {
     dataField: 'credits',
     headerAlign: 'center',
     align: 'center',
@@ -333,6 +362,12 @@ const Teaching_infomation = () => {
     headerAlign: 'center',
     align: 'center',
     text: ' วันที่ทำการสอน'
+  },
+  {
+    dataField: 'time',
+    headerAlign: 'center',
+    align: 'center',
+    text: ' เวลาทำการสอน'
   }, {
     dataField: 'manage',
     text: 'จัดการ',
@@ -414,10 +449,10 @@ const Teaching_infomation = () => {
                 วันที่ทำการสอน
               </CCol >
               <CCol >
-                <CFormSelect id="inputState" onChange={(e)=>updateTime(e)}>
-                    <option>{"(Mon - Thu)"}</option>
-                    <option>{"(Tue-Fri))"}</option>
-                    <option>{"(Wed)"}</option>
+                <CFormSelect id="inputState" onChange={updateTime} value={valueSelect} >
+                    <option >{"(Mon - Thu)"}</option>
+                    <option >{"(Tue-Fri)"}</option>
+                    <option >{"(Wed)"}</option>
                 </CFormSelect>
               </CCol>
               <CCol >
@@ -425,13 +460,22 @@ const Teaching_infomation = () => {
               </CCol >
               <CCol >
                 <CFormSelect id="inputState2">
+                  {valueSelect==="(Wed)"?(
+                    <>
+                      <option>{"08.00 – 11.00 น."}</option>
+                      <option>{"13.00 – 16.00 น."}</option>
+                    </>
+                  ):(
+                    <>
                     <option>{"08.00 – 09.30 น."}</option>
                     <option>{"09.30 – 11.00 น."}</option>
-                    <option>{"11.00 – 12.30 น."}</option>
+                    {/* <option>{"11.00 – 12.30 น."}</option> */}
                     <option>{"13.00 – 14.30 น."}</option>
                     <option>{"14.30 – 16.00 น."}</option>
                     <option>{"16.00 – 17.30 น."}</option>
                     <option>{"17.30 – 19.00 น."}</option>
+                    </>
+                  )}
                 </CFormSelect>
               </CCol>
             </CRow>

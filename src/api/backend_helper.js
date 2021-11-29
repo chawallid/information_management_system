@@ -3,6 +3,11 @@ import { del, get, post, put } from "./api_helper"
 export const getDataCourse = data => get("/AllCourse", data)
 export const getDataTeacher = data => get("/AllTeacher", data)
 export const getAllInfomation = data => get("/AllInfomation", data)
+
+export const getAllCourseMonThu = data => get("/AllCourseMonThu", data)
+export const getAllCourseTuFri = data => get("/AllCourseTuFri", data)
+export const getAllCourseWed = data => get("/AllCourseWed", data)
+
 export const UpdateInfomation = (data , id )=> put(`/updateInfomationtest/${id}`, data)
 export const updateInfomationDate = (data , id )=> put(`/updateInfomationDate/${id}`, data)
 

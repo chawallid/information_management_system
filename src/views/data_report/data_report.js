@@ -54,7 +54,12 @@ import avatar6 from 'src/assets/images/avatars/6.jpg'
 
 
 import BootstrapTable from 'react-bootstrap-table-next';
-import { getDataCourse }  from '../../api/backend_helper'
+
+import { getAllInfomation }  from '../../api/backend_helper'
+
+import { getAllCourseMonThu }  from '../../api/backend_helper'
+import { getAllCourseTuFri }  from '../../api/backend_helper'
+import { getAllCourseWed }  from '../../api/backend_helper'
 
 
 
@@ -64,10 +69,28 @@ const Data_report = () => {
   const [data,setData] = useState([])
 
   useEffect(() =>{
-    getDataCourse("").then(function(result) {
+    getAllInfomation("").then(function(result) {
       if(result.status){
-        setData(result.data)
-        console.log("filter", result.data)
+        let tmp = result.data
+        for ( let idx in result.data) {
+          // setData(result.data)
+          let name_teacher = ""
+          let sum_load = 0
+          for (let idx_name in tmp[idx]["instructor"]){
+            // console.log("ggg",tmp[idx]["instructor"][idx_name]["load"])
+            sum_load = sum_load + parseInt(tmp[idx]["instructor"][idx_name]["load"])
+            if(idx_name < 1){
+              name_teacher = name_teacher + tmp[idx]["instructor"][idx_name]["name"]
+            }else{
+              name_teacher = name_teacher +","+ tmp[idx]["instructor"][idx_name]["name"]
+
+            }
+          }
+          tmp[idx]["instructor"]  =  name_teacher
+          tmp[idx]["sumload"]  = sum_load
+        }
+        setData(tmp)
+        console.log("filter", tmp)
       }
     })
   },[])
@@ -76,7 +99,7 @@ const Data_report = () => {
 
   
   const columns_teacher = [{
-    dataField: 'teahcher',
+    dataField: 'instructor',
     headerAlign: 'center',
     align: 'center',
     text: 'อาจารย์ผู้สอน'
@@ -133,7 +156,7 @@ const Data_report = () => {
     align: 'center',
     text: 'ตอน (section)'
   }, {
-    dataField: 'teahcher',
+    dataField: 'instructor',
     headerAlign: 'center',
     align: 'center',
     text: 'อาจารย์ผู้สอน'
@@ -167,7 +190,7 @@ const Data_report = () => {
     align: 'center',
     text: 'ตอน (section)'
   }, {
-    dataField: 'teahcher',
+    dataField: 'instructor',
     headerAlign: 'center',
     align: 'center',
     text: 'อาจารย์ผู้สอน'
@@ -201,7 +224,7 @@ const Data_report = () => {
     align: 'center',
     text: 'ตอน (section)'
   }, {
-    dataField: 'teahcher',
+    dataField: 'instructor',
     headerAlign: 'center',
     align: 'center',
     text: 'อาจารย์ผู้สอน'

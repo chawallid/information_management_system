@@ -121,8 +121,7 @@ const Manage_course = () => {
         section:event.target.section.value,
         credits:event.target.credits.value,
         volume:event.target.volume.value,
-        teahcher:"NULL",
-        department:"NULL",
+        department:event.target.inputState.value,
         course_name_en:event.target.course_name_en.value
       }
       CreateCourse(fromdata).then(function(result){
@@ -211,6 +210,11 @@ const Manage_course = () => {
     headerAlign: 'center',
     text: 'ชื่อกระบวนวิชา'
   }, {
+    dataField: 'department',
+    align: 'center',
+    headerAlign: 'center',
+    text: 'ภาควิชา'
+  }, {
     dataField: 'credits',
     align: 'center',
     headerAlign: 'center',
@@ -281,6 +285,16 @@ const Manage_course = () => {
             </CRow>
             <CRow className={"mt-3"}>
               <CCol xs="auto">
+                <CFormSelect id="inputState">
+                  <option>ภาควิชาการบัญชี</option>
+                  <option>ภาควิชาการเงิน</option>
+                  <option>ภาควิชาการจัดการและการเป็นผู้ประกอบการ</option>
+                  <option>ภาควิชาการตลาด</option>
+                </CFormSelect>
+              </CCol>
+            </CRow>
+            <CRow className={"mt-3"}>
+              <CCol xs="auto">
                   <CFormInput id="credits" value={selectData.credits} placeholder="จำนวนหน่วยกิต"/>
               </CCol>
               <CCol xs="auto">
@@ -320,6 +334,16 @@ const Manage_course = () => {
               </CCol>
               <CCol xs="auto">
                 <CFormInput id="course_name_en" placeholder="ชื่อกระบวนวิชาภาษาอังกฤษ"/>
+              </CCol>
+            </CRow>
+            <CRow className={"mt-3"}>
+              <CCol xs="auto">
+                <CFormSelect id="inputState">
+                  <option>ภาควิชาการบัญชี</option>
+                  <option>ภาควิชาการเงิน</option>
+                  <option>ภาควิชาการจัดการและการเป็นผู้ประกอบการ</option>
+                  <option>ภาควิชาการตลาด</option>
+                </CFormSelect>
               </CCol>
             </CRow>
             <CRow className={"mt-3"}>
